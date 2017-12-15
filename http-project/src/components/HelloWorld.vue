@@ -1,15 +1,12 @@
 <template>
     <div class="hello">
         <div>JSON of train is : <br />
-        <p> Heure Depart : 12h50  -- numTrain : TR123 -- ville de départ : Poitiers -- Ville d'arrivée : Paris</p><br />
-        {{ trains }}<br />
-        </div>
+          <li v-for="train in trains">Heure Depart :{{ train.heureDepart }}  -- numTrain : {{ train.numTrain }} -- ville de départ : {{ train.villeArrivee }} -- Ville d'arrivée :{{ train.villeDepart }}</li></div>
         <br />
         <div>JSON of booktrain is :  <br />
-        <p> Number places : 12h50  -- numTrain : TR123</p><br />
-        {{ booktrains }}</div>
+          <li v-for="booktrain in booktrains">Nombre de places :{{ booktrain.numberPlaces }}  -- numTrain : {{ booktrain.bookNumber }}</li></div>
         <br />
-        <input type="text" v-model="input.numTrain" placeholder="Num train" />
+        <input type="text" v-model="input.bookNumber" placeholder="Numero reservation" />
         <input type="text" v-model="input.numberPlaces" placeholder="Number place" />
         <button v-on:click="sendData()">Send</button>
         <br />
@@ -25,23 +22,22 @@
         name: 'HelloWorld',
         data () {
             return {
-                ip: "",
+                trains: "",
+                booktrains: "",
                 input: {
-                    numTrain: "",
-                    numberPlaces: ""
+                    "bookNumber": "",
+                    "numberPlaces": ""
                 },
                 response: ""
             }
         },
-        trainsLoad() {
-            axios({ method: "GET", "url": "http://localhost:8080/RestProject/webresources/trains" }).then(result => {
+        mounted() {
+            axios({ method: "GET", "url": "http://localhost:8080/REST_COURS1/webresources/trains","Access-Control-Allow-Origin": "*"}).then(result => {
                 this.trains = result.data;
             }, error => {
                 console.error(error);
             });
-        },
-        trainBookLoad() {
-            axios({ method: "GET", "url": "http://localhost:8080/REST_COURS1/webresources/booktrains" }).then(result => {
+            axios({ method: "GET", "url": "http://localhost:8080/REST_COURS1/webresources/booktrains","Access-Control-Allow-Origin": "*"}).then(result => {
                 this.booktrains = result.data;
             }, error => {
                 console.error(error);
@@ -49,7 +45,14 @@
         },
         methods: {
             sendData() {
-                axios({ method: "POST", "url": "https://httpbin.org/post", "data": this.input, "headers": { "content-type": "application/json", "Access-Control-Allow-Origin": "*" , "Accept": "application/json"} }).then(result => {
+                /*axios( { method: 'POST',
+                  "url": 'http://localhost:8080/REST_COURS1/webresources/booktrains/createBookTrain',
+                  'Content-Type': 'application/json' ,
+                  "body": '{ "bookNumber": "TR123", "numberPlaces": "42" }'})
+                  */
+              axios.post('http://localhost:8080/REST_COURS1/webresources/booktrains/createBookTrain',
+                { bookNumber: 'TR123', numberPlaces: '42' }
+              ).then(result => {
                     this.response = result.data;
                 }, error => {
                     console.error(error);
